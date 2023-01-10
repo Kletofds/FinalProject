@@ -4,15 +4,17 @@ pygame.init()
 
 BLACK = (0,0,0)
 WHITE = (255,255,255)
+BLUE = (0,0,255)
 
-size = (800,600)
+size = (1000,600)
 screen = pygame.display.set_mode(size)
 
-font = pygame.font.Font(None, 24)
+buttonfont = pygame.font.Font(None, 40)
+titlefont = pygame.font.Font(None, 100)
 
 Run = True
 
-button_x = 300
+button_x = 400
 button_y = 300
 button_width = 200
 button_height = 50
@@ -26,16 +28,13 @@ class Button:
         self.text = text
         
     def DrawButton(self):
-        pygame.draw.rect(screen, WHITE, (self.rectypos, self.rectxpos, self.rect_width, self.rect_height))
+        button_rect = pygame.Rect(self.rectypos, self.rectxpos, self.rect_width, self.rect_height)
         
-        text_surface = font.render(self.text, True, BLACK)
-
-        text_width, text_height = font.size(self.text)
-
-        text_x = self.rectxpos + (self.rect_width - text_width) / 2
-        text_y = self.rectypos + (self.rect_height - text_height) / 2
-
-        screen.blit(text_surface, (text_x, text_y))
+        pygame.draw.rect(screen, BLACK, button_rect)
+        
+        button_text = buttonfont.render(self.text, True, WHITE)
+        
+        screen.blit(button_text, (426, 313))
 
 while Run:
 
@@ -44,11 +43,14 @@ while Run:
             pygame.quit()
             sys.exit()
         
-    screen.fill(BLACK)
+    screen.fill(WHITE)
     
     button = Button(button_x, button_y, 200, 50, "Start Game")
 
     button.DrawButton()
+    
+    title_text = titlefont.render("Two-gether Roll", True, BLUE)
+    screen.blit(title_text, (245, 100))
     
     pygame.display.update()
 
@@ -56,6 +58,6 @@ while Run:
 
         mouse_x, mouse_y = pygame.mouse.get_pos()
         
-        if button_y <= mouse_x <= button_x + button_width and button_y <= mouse_y <= button_y + button_height:
+        if button_x <= mouse_x <= button_x + button_width and button_y <= mouse_y <= button_y + button_height:
             pygame.quit()
             Run = False
