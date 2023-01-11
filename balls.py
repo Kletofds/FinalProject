@@ -4,7 +4,7 @@ import math
 platforms = []
 size = (1000,600)
 screen = pygame.display.set_mode(size)
-
+DRGREY = (105, 105, 105)
 GREY = (220, 220 ,220)
 BLACK = (0,0,0)
 WHITE = (255,255,255)
@@ -78,18 +78,31 @@ clock = pygame.time.Clock()
 
 Ball1 = Ball(ball1x, ball1y, ball1color)
 Ball2 = Ball(ball2x, ball2y, ball2color)
-
+#platforms
+black1 = platform(DRGREY, 850, 425, 100, 25)
 
 small1 = platform(GREY, 250, 575, 25, 25)
 small2 = platform(GREY, 350, 550, 50, 25)
 
 big1 = platform(GREY, 425, 525, 75, 100)
+big2 = platform(GREY, 600, 525, 75, 400)
 
-wall1 = platform(GREY, 800, 150, 600, 100)
-wall2 = platform(GREY, 700, 300, 600, 25)
+wall1 = platform(GREY, 800, 150, 300, 100)
+wall2 = platform(GREY, 650, 300, 150, 25)
 
+smallest1 = platform(GREY, 650, 275, 25, 50)
+smallest2 = platform(GREY, 650, 425, 25, 50)
+smallest3 = platform(GREY, 775, 350, 25, 50)
 
 floating1 = platform(GREY, 200, 150, 50, 1000)
+floating2 = platform(GREY, 100, 275, 50, 100)
+floating3 = platform(GREY, 400, 275, 50, 200)
+floating4 = platform(GREY, 237.5, 325, 50, 125)
+floating5 = platform(GREY, 0, 225, 50, 50)
+floating6 = platform(GREY, 125, 175, 25, 100)
+
+end = platform(DRGREY, 900, 0, 150, 200)
+
 while Run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -166,5 +179,3 @@ while Run:
     pygame.display.update()
     
     clock.tick(60)
-    
-    
