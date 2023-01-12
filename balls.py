@@ -1,14 +1,21 @@
 import pygame
 from pygame import *
 import math
+
 platforms = []
+
 size = (1000,600)
 screen = pygame.display.set_mode(size)
+
 DRGREY = (105, 105, 105)
 GREY = (220, 220 ,220)
 BLACK = (0,0,0)
 WHITE = (255,255,255)
 RED = (255,0,0)
+
+groundlevel1 = 500
+groundlevel2 = 500
+
 class platform:
     def __init__(self, color, xpos, ypos, h, w):
         self.xpos = xpos
@@ -20,8 +27,8 @@ class platform:
     def draw(self):
         pygame.draw.rect(screen, self.color, pygame.Rect(self.xpos, self.ypos, self.w, self.h))
 
-class Ball:
-    def __init__(self, xpos, ypos, color):
+class Character:
+    def __init__(self, xpos, ypos, color, groundlevel):
         self.size = size
         self.xpos = xpos
         self.ypos = ypos
@@ -31,6 +38,7 @@ class Ball:
         self.ay = 0.5 
         self.ax = 0
         self.jumped = False
+        self.groundlevel = groundlevel
         
     def update(self):
         self.vy += self.ay
@@ -39,29 +47,15 @@ class Ball:
         self.vx += self.ax
         self.xpos += self.vx
         
-        if self.ypos > 570:
-            self.ypos = 570
+        if self.ypos > self.groundlevel:
+            self.ypos = self.groundlevel
             self.vy = 0
             self.jumped = False
                    
-    def DrawBall(self):
-        pygame.draw.circle(screen, (self.color), (self.xpos, self.ypos), 30, 0)
+    def DrawSquare(self):
+        square = pygame.draw.rect(screen, self.color, pygame.Rect(self.xpos, self.ypos, 30, 30))
+        return square
         
-def CheckCollision(b1, b2):
-    dist = math.sqrt((b1.xpos - b2.xpos)**2 + (b1.ypos - b2.ypos)**2)
-        
-    if dist < 65:     
-        return True
-    else:
-        return False
-
-def PlatformCollision(moving, plat):
-    dist = math.sqrt((moving.xpos - plat.xpos)**2 + (moving.ypos - plat.ypos)**2)
-        
-    if dist < plat.w:     
-        return True
-    else:
-        return False
 pygame.init()
 
 Run = True
@@ -76,32 +70,43 @@ ball2color = BLACK
 
 clock = pygame.time.Clock()
 
-Ball1 = Ball(ball1x, ball1y, ball1color)
-Ball2 = Ball(ball2x, ball2y, ball2color)
+Ball1 = Character(ball1x, ball1y, ball1color, groundlevel1)
+Ball2 = Character(ball2x, ball2y, ball2color, groundlevel2)
+
 #platforms
-black1 = platform(DRGREY, 850, 425, 100, 25)
+black1 = platform(DRGREY, 850, 425, 110, 25)
+
+
 
 small1 = platform(GREY, 250, 575, 25, 25)
 small2 = platform(GREY, 350, 550, 50, 25)
 
-big1 = platform(GREY, 425, 525, 75, 100)
-big2 = platform(GREY, 600, 525, 75, 400)
+big1 = platform(GREY, 425, 530, 75, 125)
+big2 = platform(GREY, 600, 530, 75, 400)
+big3 = platform(GREY, 0, 530, 70, 300)
 
 wall1 = platform(GREY, 800, 150, 300, 100)
-wall2 = platform(GREY, 650, 300, 150, 25)
+wall2 = platform(GREY, 500, 300, 175, 25)
 
 smallest1 = platform(GREY, 650, 275, 25, 50)
-smallest2 = platform(GREY, 650, 425, 25, 50)
-smallest3 = platform(GREY, 775, 350, 25, 50)
+smallest2 = platform(GREY, 500, 450, 25, 50)
+smallest3 = platform(GREY, 775, 425, 25, 50)
 
 floating1 = platform(GREY, 200, 150, 50, 1000)
 floating2 = platform(GREY, 100, 275, 50, 100)
-floating3 = platform(GREY, 400, 275, 50, 200)
-floating4 = platform(GREY, 237.5, 325, 50, 125)
-floating5 = platform(GREY, 0, 225, 50, 50)
 floating6 = platform(GREY, 125, 175, 25, 100)
 
 end = platform(DRGREY, 900, 0, 150, 200)
+
+Ball1.update()
+Ball2.update()
+    
+screen.fill(RED)
+
+square1 = Ball1.DrawSquare()
+square2 = Ball2.DrawSquare()
+
+pygame.display.update()
 
 while Run:
     for event in pygame.event.get():
@@ -110,46 +115,34 @@ while Run:
             pygame.quit()
             
     keys = pygame.key.get_pressed()
+    collide = pygame.Rect.colliderect(square1, square2)
     
-    CollideCheck = CheckCollision(Ball1, Ball2)
-    
-    if keys[pygame.K_d]:
-        if CollideCheck and Ball1.xpos < Ball2.xpos:
-            Ball1.xpos = Ball2.xpos - 60
-        else:
-            Ball1.xpos += 5
-        for plat in platforms:
-            CollideCheck = PlatformCollision(Ball1, plat)
-            if CollideCheck and Ball1.xpos < plat.xpos:
-                Ball1.xpos = plat.xpos - 30
-    if keys[pygame.K_a]:
-        if CollideCheck and Ball1.xpos > Ball2.xpos:
-            Ball1xpos = Ball2.xpos + 60
-        else:
-            Ball1.xpos -= 5
-        for plat in platforms:
-            CollideCheck = PlatformCollision(Ball1, plat)
-            if CollideCheck and Ball1.xpos > plat.xpos:
-                Ball1.xpos = plat.xpos + plat.w + 60
+    if keys[pygame.K_d] and not collide:
+        Ball1.xpos += 5
+           
+    if keys[pygame.K_a] and not collide:
+        Ball1.xpos -= 5
     
     if keys[pygame.K_RIGHT]:
-        if CollideCheck and Ball1.xpos > Ball2.xpos:
-            Ball2.xpos = Ball1.xpos - 60
+        if Ball2.ypos < Ball1.ypos + 30 and Ball2.ypos > Ball1.ypos - 30 and Ball2.xpos == Ball1.xpos - 30:
+            pass
+                
         else:
             Ball2.xpos += 5
         
     if keys[pygame.K_LEFT]:
-        if CollideCheck and Ball1.xpos < Ball2.xpos:
-            Ball2.xpos = Ball1.xpos + 60
+        if Ball2.ypos < Ball1.ypos + 30 and Ball2.ypos > Ball1.ypos - 30 and Ball2.xpos == Ball1.xpos + 30:
+            pass
+                
         else:
             Ball2.xpos -= 5
         
     if keys[pygame.K_w] and not Ball1.jumped:
-        Ball1.vy = -10
+        Ball1.vy = -8
         Ball1.jumped = True
         
     if keys[pygame.K_UP] and not Ball2.jumped:
-        Ball2.vy = -10
+        Ball2.vy = -8
         Ball2.jumped = True    
             
     if Ball1.xpos < 30:
@@ -163,19 +156,19 @@ while Run:
         
     if Ball2.xpos > 970:
         Ball2.xpos = 970 
+                          
                
     Ball1.update()
     Ball2.update()
-    
         
-    
     screen.fill(RED)
-            
-    Ball1.DrawBall()
-    Ball2.DrawBall()
+    
+    square1 = Ball1.DrawSquare()
+    square2 = Ball2.DrawSquare()
     
     for plat in platforms:
         plat.draw()
+    
     pygame.display.update()
     
     clock.tick(60)
