@@ -77,23 +77,27 @@ while Run:
     keys = pygame.key.get_pressed()
     collide = pygame.Rect.colliderect(square1, square2)
     
-    if keys[pygame.K_d] and not collide:
-        Ball1.xpos += 5
-           
-    if keys[pygame.K_a] and not collide:
-        Ball1.xpos -= 5
+    if keys[pygame.K_d]:
+        if collide and Ball1.xpos < Ball2.xpos:       
+            pass
+        else:
+            Ball1.xpos += 5
+        
+    if keys[pygame.K_a]:
+        if collide and Ball1.xpos > Ball2.xpos:       
+            pass
+        else:
+            Ball1.xpos -= 5
     
     if keys[pygame.K_RIGHT]:
-        if Ball2.ypos < Ball1.ypos + 30 and Ball2.ypos > Ball1.ypos - 30 and Ball2.xpos == Ball1.xpos - 30:
+        if collide and Ball2.xpos < Ball1.xpos:       
             pass
-                
         else:
             Ball2.xpos += 5
         
     if keys[pygame.K_LEFT]:
-        if Ball2.ypos < Ball1.ypos + 30 and Ball2.ypos > Ball1.ypos - 30 and Ball2.xpos == Ball1.xpos + 30:
+        if collide and Ball2.xpos > Ball1.xpos:       
             pass
-                
         else:
             Ball2.xpos -= 5
         
@@ -115,7 +119,16 @@ while Run:
         Ball2.xpos = 30
         
     if Ball2.xpos > 970:
-        Ball2.xpos = 970 
+        Ball2.xpos = 970
+        
+    if collide:
+        if Ball1.xpos - 15 < Ball2.xpos + 15 or Ball1.xpos + 15 > Ball2.xpos - 15:
+            if Ball1.ypos < Ball2.ypos + 15:
+                Ball1.groundlevel = Ball2.groundlevel - 15
+                
+        if Ball2.xpos - 15 < Ball1.xpos + 15 or Ball2.xpos + 15 > Ball1.xpos - 15:
+            if Ball2.ypos < Ball1.ypos + 15:
+                Ball2.groundlevel = Ball2.groundlevel - 15
                           
                
     Ball1.update()
