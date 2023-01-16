@@ -18,19 +18,14 @@ class Character:
         self.xpos = xpos
         self.ypos = ypos
         self.color = color
-        self.vx = 0
         self.vy = 0
         self.ay = 0.5 
-        self.ax = 0
         self.jumped = False
         self.groundlevel = groundlevel
         
     def update(self):
         self.vy += self.ay
         self.ypos += self.vy
-        
-        self.vx += self.ax
-        self.xpos += self.vx
         
         if self.ypos > self.groundlevel:
             self.ypos = self.groundlevel
@@ -44,6 +39,8 @@ class Character:
 pygame.init()
 
 Run = True
+ontwo = False
+onone = False
 
 ball1x = 200
 ball1y = 500
@@ -63,8 +60,8 @@ Ball2.update()
     
 screen.fill(RED)
 
-square1 = Ball1.DrawSquare()
-square2 = Ball2.DrawSquare()
+Ball1.DrawSquare()
+Ball1.DrawSquare()
 
 pygame.display.update()
 
@@ -75,31 +72,18 @@ while Run:
             pygame.quit()
             
     keys = pygame.key.get_pressed()
-    collide = pygame.Rect.colliderect(square1, square2)
     
     if keys[pygame.K_d]:
-        if collide and Ball1.xpos < Ball2.xpos:       
-            pass
-        else:
-            Ball1.xpos += 5
-        
+        Ball1.xpos += 5
+           
     if keys[pygame.K_a]:
-        if collide and Ball1.xpos > Ball2.xpos:       
-            pass
-        else:
-            Ball1.xpos -= 5
+        Ball1.xpos -= 5
     
     if keys[pygame.K_RIGHT]:
-        if collide and Ball2.xpos < Ball1.xpos:       
-            pass
-        else:
-            Ball2.xpos += 5
+        Ball2.xpos += 5
         
     if keys[pygame.K_LEFT]:
-        if collide and Ball2.xpos > Ball1.xpos:       
-            pass
-        else:
-            Ball2.xpos -= 5
+        Ball2.xpos -= 5
         
     if keys[pygame.K_w] and not Ball1.jumped:
         Ball1.vy = -8
@@ -121,23 +105,45 @@ while Run:
     if Ball2.xpos > 970:
         Ball2.xpos = 970
         
-    if collide:
-        if Ball1.xpos - 15 < Ball2.xpos + 15 or Ball1.xpos + 15 > Ball2.xpos - 15:
-            if Ball1.ypos < Ball2.ypos + 15:
-                Ball1.groundlevel = Ball2.groundlevel - 15
-                
-        if Ball2.xpos - 15 < Ball1.xpos + 15 or Ball2.xpos + 15 > Ball1.xpos - 15:
-            if Ball2.ypos < Ball1.ypos + 15:
-                Ball2.groundlevel = Ball2.groundlevel - 15
-                          
+    
+    if Ball1.ypos < Ball2.ypos + 30 and Ball1.ypos > Ball2.ypos - 30 or Ball2.ypos < Ball1.ypos + 30 and Ball2.ypos > Ball1.ypos - 30:
+        if Ball1.xpos >= Ball2.xpos - 30 and Ball1.xpos < Ball2.xpos and keys[pygame.K_d]:
+            Ball1.xpos = Ball2.xpos - 30  
+        if Ball1.xpos <= Ball2.xpos + 30 and Ball1.xpos > Ball2.xpos and keys[pygame.K_a]:
+            Ball1.xpos = Ball2.xpos + 30       
+        if Ball2.xpos <= Ball1.xpos + 30 and Ball2.xpos > Ball1.xpos and keys[pygame.K_LEFT]:
+            Ball2.xpos = Ball1.xpos + 30   
+        if Ball2.xpos >= Ball1.xpos - 30 and Ball2.xpos < Ball1.xpos and keys[pygame.K_RIGHT]:
+            Ball2.xpos = Ball1.xpos - 30
+            
+    if Ball1.xpos < Ball2.xpos + 30 and Ball1.xpos > Ball2.xpos - 30 or Ball2.xpos < Ball1.xpos + 30 and Ball2.xpos > Ball1.xpos - 30:
+        if Ball1.ypos >= Ball2.ypos - 30 and Ball1.ypos < Ball2.ypos:
+            Ball1.ypos = Ball2.ypos - 30
+            Ball1.groundlevel = Ball2.ypos - 30
+            ontwo = True
+            
+        if Ball2.ypos >= Ball1.ypos - 30 and Ball2.ypos < Ball1.ypos:
+            Ball2.ypos = Ball1.ypos - 30
+            Ball2.groundlevel = Ball1.ypos - 30
+            onone = True
+            
+    if ontwo:
+        if Ball1.xpos > Ball2.xpos + 30 or Ball1.xpos < Ball2.xpos - 30:
+            ontwo = False
+            Ball1.groundlevel = Ball2.groundlevel
+            
+    if onone:
+        if Ball2.xpos > Ball1.xpos + 30 or Ball2.xpos < Ball1.xpos - 30:
+            onone = False
+            Ball2.groundlevel = Ball1.groundlevel
                
     Ball1.update()
     Ball2.update()
         
     screen.fill(RED)
     
-    square1 = Ball1.DrawSquare()
-    square2 = Ball2.DrawSquare()
+    Ball1.DrawSquare()
+    Ball2.DrawSquare()
     
     pygame.display.update()
     
