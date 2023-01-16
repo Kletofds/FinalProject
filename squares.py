@@ -34,10 +34,8 @@ class Character:
         self.xpos = xpos
         self.ypos = ypos
         self.color = color
-        self.vx = 0
         self.vy = 0
         self.ay = 0.5 
-        self.ax = 0
         self.jumped = False
         self.groundlevel = groundlevel
         
@@ -45,21 +43,21 @@ class Character:
         self.vy += self.ay
         self.ypos += self.vy
         
-        self.vx += self.ax
-        self.xpos += self.vx
-        
         if self.ypos > self.groundlevel:
             self.ypos = self.groundlevel
             self.vy = 0
             self.jumped = False
                    
     def DrawSquare(self):
-        square = pygame.draw.rect(screen, self.color, pygame.Rect(self.xpos, self.ypos, 30, 30))
-        return square
+        pygame.draw.rect(screen, self.color, pygame.Rect(self.xpos, self.ypos, 30, 30))
+
         
 pygame.init()
 
 Run = True
+ontwo = False
+onone = False
+oneonplat = True
 
 ball1x = 200
 ball1y = 500
@@ -121,27 +119,19 @@ while Run:
             pygame.quit()
             
     keys = pygame.key.get_pressed()
-    collide = pygame.Rect.colliderect(square1, square2)
+    oneonplat= False
     
-    if keys[pygame.K_d] and not collide:
+    if keys[pygame.K_d]:
         Ball1.xpos += 5
            
-    if keys[pygame.K_a] and not collide:
+    if keys[pygame.K_a]:
         Ball1.xpos -= 5
     
     if keys[pygame.K_RIGHT]:
-        if Ball2.ypos < Ball1.ypos + 30 and Ball2.ypos > Ball1.ypos - 30 and Ball2.xpos == Ball1.xpos - 30:
-            pass
-                
-        else:
-            Ball2.xpos += 5
+        Ball2.xpos += 5
         
     if keys[pygame.K_LEFT]:
-        if Ball2.ypos < Ball1.ypos + 30 and Ball2.ypos > Ball1.ypos - 30 and Ball2.xpos == Ball1.xpos + 30:
-            pass
-                
-        else:
-            Ball2.xpos -= 5
+        Ball2.xpos -= 5
         
     if keys[pygame.K_w] and not Ball1.jumped:
         Ball1.vy = -8
@@ -161,9 +151,48 @@ while Run:
         Ball2.xpos = 30
         
     if Ball2.xpos > 970:
-        Ball2.xpos = 970 
-                          
-               
+        Ball2.xpos = 970
+        
+    if Ball1.ypos < Ball2.ypos + 30 and Ball1.ypos > Ball2.ypos - 30 or Ball2.ypos < Ball1.ypos + 30 and Ball2.ypos > Ball1.ypos - 30:
+        if Ball1.xpos >= Ball2.xpos - 30 and Ball1.xpos < Ball2.xpos and keys[pygame.K_d]:
+            Ball1.xpos = Ball2.xpos - 30  
+        if Ball1.xpos <= Ball2.xpos + 30 and Ball1.xpos > Ball2.xpos and keys[pygame.K_a]:
+            Ball1.xpos = Ball2.xpos + 30       
+        if Ball2.xpos <= Ball1.xpos + 30 and Ball2.xpos > Ball1.xpos and keys[pygame.K_LEFT]:
+            Ball2.xpos = Ball1.xpos + 30   
+        if Ball2.xpos >= Ball1.xpos - 30 and Ball2.xpos < Ball1.xpos and keys[pygame.K_RIGHT]:
+            Ball2.xpos = Ball1.xpos - 30
+                
+    if Ball1.xpos < Ball2.xpos + 30 and Ball1.xpos > Ball2.xpos - 30 or Ball2.xpos < Ball1.xpos + 30 and Ball2.xpos > Ball1.xpos - 30:
+        if Ball1.ypos >= Ball2.ypos - 30 and Ball1.ypos < Ball2.ypos:
+            Ball1.ypos = Ball2.ypos - 30
+            Ball1.groundlevel = Ball2.ypos - 30
+            ontwo = True
+            
+        if Ball2.ypos >= Ball1.ypos - 30 and Ball2.ypos < Ball1.ypos:
+            Ball2.ypos = Ball1.ypos - 30
+            Ball2.groundlevel = Ball1.ypos - 30
+            onone = True
+            
+    if ontwo:
+        if Ball1.xpos > Ball2.xpos + 30 or Ball1.xpos < Ball2.xpos - 30:
+            ontwo = False
+            Ball1.groundlevel = Ball2.groundlevel
+            
+    if onone:
+        if Ball2.xpos > Ball1.xpos + 30 or Ball2.xpos < Ball1.xpos - 30:
+            onone = False
+            Ball2.groundlevel = Ball1.groundlevel
+            
+    for plat in platforms:
+        if Ball1.xpos < plat.xpos + (plat.w / 2) and Ball1.xpos > plat.xpos - (plat.w / 2):
+            if Ball1.ypos + 30 <= plat.ypos + (plat.h / 2) and Ball1.ypos < plat.ypos:
+                Ball1.groundlevel = plat.ypos - (plat.h / 2) + 7.5
+                oneonplat = True
+                
+    if not oneonplat:
+        Ball1.groundlevel += 5
+            
     Ball1.update()
     Ball2.update()
         
