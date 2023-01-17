@@ -29,7 +29,7 @@ class platform:
         pygame.draw.rect(screen, self.color, pygame.Rect(self.xpos, self.ypos, self.w, self.h))
 
 class Character:
-    def __init__(self, xpos, ypos, color, groundlevel):
+    def __init__(self, xpos, ypos, color, groundlevel, h,  w):
         self.size = size
         self.xpos = xpos
         self.ypos = ypos
@@ -38,13 +38,22 @@ class Character:
         self.ay = 0.5 
         self.jumped = False
         self.groundlevel = groundlevel
+        self.h = h
+        self.w = w
         
+    def on_platform(self):
+        for plat in platforms:
+            if (plat.xpos <= self.xpos <= plat.xpos + plat.w) and (plat.ypos <= self.ypos <= plat.ypos + plat.h):
+                return plat
+        return None
+    
     def update(self):
-        self.vy += self.ay
-        self.ypos += self.vy
-        
-        if self.ypos > self.groundlevel:
-            self.ypos = self.groundlevel
+        current_platform = self.on_platform()
+        if current_platform is None:
+            self.vy += self.ay
+            self.ypos += self.vy
+        else:
+            self.ypos = current_platform.ypos - self.h
             self.vy = 0
             self.jumped = False
                    
@@ -69,8 +78,8 @@ ball2color = BLACK
 
 clock = pygame.time.Clock()
 
-Ball1 = Character(ball1x, ball1y, ball1color, groundlevel1)
-Ball2 = Character(ball2x, ball2y, ball2color, groundlevel2)
+Ball1 = Character(ball1x, ball1y, ball1color, groundlevel1, 30, 30)
+Ball2 = Character(ball2x, ball2y, ball2color, groundlevel2, 30, 30)
 
 #platforms
 buttonblack = platform(GREEN, 450, 520, 10, 20)
@@ -183,12 +192,6 @@ while Run:
         if Ball2.xpos > Ball1.xpos + 30 or Ball2.xpos < Ball1.xpos - 30:
             onone = False
             Ball2.groundlevel = Ball1.groundlevel
-            
-    for plat in platforms:
-        if Ball1.xpos < plat.xpos + (plat.w / 2) and Ball1.xpos > plat.xpos - (plat.w / 2):
-            if Ball1.ypos + 30 <= plat.ypos + (plat.h / 2) and Ball1.ypos < plat.ypos:
-                Ball1.groundlevel = plat.ypos - (plat.h / 2) + 7.5
-                oneonplat = True
                 
     if not oneonplat:
         Ball1.groundlevel += 5
