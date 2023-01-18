@@ -1,14 +1,23 @@
+##################################
+#        Twogether Slide         #
+#         01, 07, 2023           #
+#      B1GM6N and Kletofds       #
+##################################
+
+# import modules
 import pygame
 from pygame import *
 import math
 import time
 
+#lists for platforms and the ending 
 platforms = []
 endings = []
 
+# prepares screen size
 size = (1000,600)
 screen = pygame.display.set_mode(size)
-
+# RGB colors
 GREEN = (0, 255, 0)
 DRGREY = (105, 105, 105)
 GREY = (220, 220 ,220)
@@ -19,6 +28,7 @@ RED = (255,0,0)
 groundlevel1 = 500
 groundlevel2 = 500
 
+# platform class we used to make all the platforms in the game
 class platform:
     def __init__(self, color, xpos, ypos, h, w):
         self.xpos = xpos
@@ -64,7 +74,7 @@ class Character:
             self.jumped = False
             
         for plat in platforms:
-            if self.xpos <= plat.xpos + (plat.w) and self.xpos >= plat.xpos - 30:
+            if self.xpos < plat.xpos + (plat.w) and self.xpos > plat.xpos - 30:
                 if self.ypos + 30 <= plat.ypos + (plat.h / 2) and self.ypos < plat.ypos and self.ypos > plat.ypos - 35:
                     self.groundlevel = plat.ypos - 30
                     onplat = True
@@ -100,17 +110,16 @@ Ball2 = Character(ball2x, ball2y, ball2color, groundlevel2)
 
 black1 = platform(DRGREY, 850, 425, 110, 25)
 
-white1 = platform(DRGREY, 500, 450, 80, 25)
-
 small1 = platform(GREY, 200, 575, 25, 25)
-small2 = platform(GREY, 350, 550, 50, 25)
+small2 = platform(GREY, 350, 525, 75, 25)
+small3 = platform(GREY, 375, 590, 10, 125)
 
-big1 = platform(GREY, 425, 530, 75, 575)
+big1 = platform(GREY, 500, 530, 75, 575)
 
 big3 = platform(GREY, 0, 530, 70, 100)
 
-wall1 = platform(GREY, 800, 150, 300, 100)
-wall2 = platform(GREY, 500, 300, 175, 25)
+wall1 = platform(GREY, 800, 150, 300, 200)
+wall2 = platform(GREY, 500, 300, 250, 25)
 
 smallest1 = platform(GREY, 650, 290, 10, 50)
 smallest2 = platform(GREY, 500, 400, 25, 50)
@@ -118,11 +127,14 @@ smallest4 = platform(GREY, 675, 440, 10, 125)
 smallestnew = platform(GREY, 650, 345, 10, 50)
 
 bump1 = platform(GREY, 600, 495, 35, 25)
+#earlybump = platform(GREY, 475, 505, 25, 25)
 
-floating1 = platform(GREY, 200, 150, 50, 1000)
-floating2 = platform(GREY, 100, 275, 50, 100)
+floating2 = platform(GREY, 100, 275, 25, 50)
 floating6 = platform(GREY, 125, 175, 25, 100)
-#floatingnew = platform(GREY, 
+floatingnew = platform(GREY, 300, 300, 50, 20)
+floating1 = platform(GREY, 0, 225, 25, 25)
+floating2 = platform(GREY, 350, 125, 25, 25)
+floating5 = platform(GREY, 550, 125, 25, 40)
 
 ending = end(DRGREY, 900, 0, 150, 200)
 
@@ -175,7 +187,20 @@ while Run:
         
     if Ball2.xpos > 970:
         Ball2.xpos = 970
-        
+    
+    for plat in platforms:
+        if Ball1.ypos + 30 > plat.ypos and Ball1.ypos < plat.ypos + plat.h:
+            if keys[pygame.K_d] and Ball1.xpos + 30 >= plat.xpos and Ball1.xpos < plat.xpos:
+                Ball1.xpos = plat.xpos - 30
+            if keys[pygame.K_a] and Ball1.xpos <= plat.xpos + plat.w and Ball1.xpos + 35 > plat.xpos + plat.w:
+                Ball1.xpos = plat.xpos + plat.w
+
+        if Ball2.ypos + 30 > plat.ypos and Ball2.ypos < plat.ypos + plat.h:
+            if keys[pygame.K_RIGHT] and Ball2.xpos + 30 >= plat.xpos and Ball2.xpos < plat.xpos:
+                Ball2.xpos = plat.xpos - 30
+            if keys[pygame.K_LEFT] and Ball2.xpos <= plat.xpos + plat.w and Ball2.xpos + 35 > plat.xpos + plat.w:
+                Ball2.xpos = plat.xpos + plat.w    
+    
     if Ball1.ypos < Ball2.ypos + 30 and Ball1.ypos > Ball2.ypos - 30 or Ball2.ypos < Ball1.ypos + 30 and Ball2.ypos > Ball1.ypos - 30:
         if Ball1.xpos >= Ball2.xpos - 30 and Ball1.xpos < Ball2.xpos and keys[pygame.K_d]:
             Ball1.xpos = Ball2.xpos - 30  
