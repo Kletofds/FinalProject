@@ -1,8 +1,10 @@
 import pygame
 from pygame import *
 import math
+import time
 
 platforms = []
+endings = []
 
 size = (1000,600)
 screen = pygame.display.set_mode(size)
@@ -28,8 +30,19 @@ class platform:
     def draw(self):
         pygame.draw.rect(screen, self.color, pygame.Rect(self.xpos, self.ypos, self.w, self.h))
 
+class end:
+    def __init__(self, color, xpos, ypos, h, w):
+        self.xpos = xpos
+        self.color = color
+        self.ypos = ypos
+        self.w = w
+        self.h = h
+        endings.append(self)
+    def draw(self):
+        pygame.draw.rect(screen, self.color, pygame.Rect(self.xpos, self.ypos, self.w, self.h))
+
 class Character:
-    def __init__(self, xpos, ypos, color, groundlevel, h,  w):
+    def __init__(self, xpos, ypos, color, groundlevel):
         self.size = size
         self.xpos = xpos
         self.ypos = ypos
@@ -38,24 +51,26 @@ class Character:
         self.ay = 0.5 
         self.jumped = False
         self.groundlevel = groundlevel
-        self.h = h
-        self.w = w
         
-    def on_platform(self):
-        for plat in platforms:
-            if (plat.xpos <= self.xpos <= plat.xpos + plat.w) and (plat.ypos <= self.ypos <= plat.ypos + plat.h):
-                return plat
-        return None
-    
     def update(self):
-        current_platform = self.on_platform()
-        if current_platform is None:
-            self.vy += self.ay
-            self.ypos += self.vy
-        else:
-            self.ypos = current_platform.ypos - self.h
+        onplat = False
+        
+        self.vy += self.ay
+        self.ypos += self.vy
+        
+        if self.ypos > self.groundlevel:
+            self.ypos = self.groundlevel
             self.vy = 0
             self.jumped = False
+            
+        for plat in platforms:
+            if self.xpos <= plat.xpos + (plat.w) and self.xpos >= plat.xpos:
+                if self.ypos + 30 <= plat.ypos + (plat.h / 2) and self.ypos < plat.ypos:
+                    self.groundlevel = plat.ypos - 30
+                    onplat = True
+                
+        if not onplat:
+            self.groundlevel += 5
                    
     def DrawSquare(self):
         pygame.draw.rect(screen, self.color, pygame.Rect(self.xpos, self.ypos, 30, 30))
@@ -78,12 +93,10 @@ ball2color = BLACK
 
 clock = pygame.time.Clock()
 
-Ball1 = Character(ball1x, ball1y, ball1color, groundlevel1, 30, 30)
-Ball2 = Character(ball2x, ball2y, ball2color, groundlevel2, 30, 30)
+Ball1 = Character(ball1x, ball1y, ball1color, groundlevel1)
+Ball2 = Character(ball2x, ball2y, ball2color, groundlevel2)
 
-#platforms
-buttonblack = platform(GREEN, 450, 520, 10, 20)
-buttonwhite = smallest3 = platform(GREEN, 750, 430, 10, 20)
+#platform
 
 black1 = platform(DRGREY, 850, 425, 110, 25)
 
@@ -103,13 +116,13 @@ smallest1 = platform(GREY, 650, 275, 25, 50)
 smallest2 = platform(GREY, 500, 450, 25, 50)
 smallest4 = platform(GREY, 675, 440, 10, 125)
 
-bump1 = platform(GREY, 600, 495, 40, 25)
+bump1 = platform(GREY, 600, 495, 35, 25)
 
 floating1 = platform(GREY, 200, 150, 50, 1000)
 floating2 = platform(GREY, 100, 275, 50, 100)
 floating6 = platform(GREY, 125, 175, 25, 100)
 
-end = platform(DRGREY, 900, 0, 150, 200)
+ending = end(DRGREY, 900, 0, 150, 200)
 
 Ball1.update()
 Ball2.update()
@@ -124,8 +137,7 @@ pygame.display.update()
 while Run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            run = False
-            pygame.quit()
+            Run = False
             
     keys = pygame.key.get_pressed()
     oneonplat= False
@@ -192,9 +204,8 @@ while Run:
         if Ball2.xpos > Ball1.xpos + 30 or Ball2.xpos < Ball1.xpos - 30:
             onone = False
             Ball2.groundlevel = Ball1.groundlevel
-                
-    if not oneonplat:
-        Ball1.groundlevel += 5
+            
+
             
     Ball1.update()
     Ball2.update()
@@ -206,7 +217,14 @@ while Run:
     
     for plat in platforms:
         plat.draw()
-    
+    for ends in endings:
+        ends.draw()
     pygame.display.update()
     
+    if Ball1.ypos >= 570 or Ball2.ypos >= 570:
+        Run = False
+        time.sleep(3)
+    
     clock.tick(60)
+    
+pygame.quit()
