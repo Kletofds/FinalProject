@@ -64,8 +64,8 @@ class Character:
             self.jumped = False
             
         for plat in platforms:
-            if self.xpos <= plat.xpos + (plat.w) and self.xpos >= plat.xpos:
-                if self.ypos + 30 <= plat.ypos + (plat.h / 2) and self.ypos < plat.ypos:
+            if self.xpos <= plat.xpos + (plat.w) and self.xpos >= plat.xpos - 30:
+                if self.ypos + 30 <= plat.ypos + (plat.h / 2) and self.ypos < plat.ypos and self.ypos > plat.ypos - 35:
                     self.groundlevel = plat.ypos - 30
                     onplat = True
                 
@@ -83,7 +83,7 @@ ontwo = False
 onone = False
 oneonplat = True
 
-ball1x = 200
+ball1x = 50
 ball1y = 500
 ball1color = WHITE
 
@@ -96,31 +96,33 @@ clock = pygame.time.Clock()
 Ball1 = Character(ball1x, ball1y, ball1color, groundlevel1)
 Ball2 = Character(ball2x, ball2y, ball2color, groundlevel2)
 
-#platform
+
 
 black1 = platform(DRGREY, 850, 425, 110, 25)
 
 white1 = platform(DRGREY, 500, 450, 80, 25)
 
-small1 = platform(GREY, 250, 575, 25, 25)
+small1 = platform(GREY, 200, 575, 25, 25)
 small2 = platform(GREY, 350, 550, 50, 25)
 
 big1 = platform(GREY, 425, 530, 75, 575)
-big2 = platform(GREY, 600, 530, 75, 400)
-big3 = platform(GREY, 0, 530, 70, 300)
+
+big3 = platform(GREY, 0, 530, 70, 100)
 
 wall1 = platform(GREY, 800, 150, 300, 100)
 wall2 = platform(GREY, 500, 300, 175, 25)
 
-smallest1 = platform(GREY, 650, 275, 25, 50)
-smallest2 = platform(GREY, 500, 450, 25, 50)
+smallest1 = platform(GREY, 650, 290, 10, 50)
+smallest2 = platform(GREY, 500, 400, 25, 50)
 smallest4 = platform(GREY, 675, 440, 10, 125)
+smallestnew = platform(GREY, 650, 345, 10, 50)
 
 bump1 = platform(GREY, 600, 495, 35, 25)
 
 floating1 = platform(GREY, 200, 150, 50, 1000)
 floating2 = platform(GREY, 100, 275, 50, 100)
 floating6 = platform(GREY, 125, 175, 25, 100)
+#floatingnew = platform(GREY, 
 
 ending = end(DRGREY, 900, 0, 150, 200)
 
@@ -162,14 +164,14 @@ while Run:
         Ball2.vy = -8
         Ball2.jumped = True    
             
-    if Ball1.xpos < 30:
-        Ball1.xpos = 30
+    if Ball1.xpos < 0:
+        Ball1.xpos = 0
         
     if Ball1.xpos > 970:
         Ball1.xpos = 970
         
-    if Ball2.xpos < 30:
-        Ball2.xpos = 30
+    if Ball2.xpos < 0:
+        Ball2.xpos = 0
         
     if Ball2.xpos > 970:
         Ball2.xpos = 970
