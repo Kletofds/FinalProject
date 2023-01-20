@@ -14,6 +14,7 @@ import time
 platforms = []
 buttons = []
 newplatforms = []
+endings = []
 
 global newplats
 newplats = False
@@ -49,7 +50,7 @@ class platform:
         pygame.draw.rect(screen, self.color, pygame.Rect(self.xpos, self.ypos, self.w, self.h))
 
 # class that makes the blocks at the end of the game
-class end:
+class ending:
     def __init__(self, color, xpos, ypos, h, w, listy):
         self.xpos = xpos
         self.color = color
@@ -60,11 +61,12 @@ class end:
         
     # Draws the ending blocks
     def draw(self):
-        pygame.draw.rect(screen, self.color, pygame.Rect(self.xpos, self.ypos, self.w, self.h))
-
+        endy = pygame.draw.rect(screen, self.color, pygame.Rect(self.xpos, self.ypos, self.w, self.h))
+        return endy
+    
 # class that creates the 2 characters and updates there position
 class Character:
-    def __init__(self, xpos, ypos, color, groundlevel):
+    def __init__(self, xpos, ypos, color, groundlevel, square):
         self.size = size
         self.xpos = xpos
         self.ypos = ypos
@@ -141,8 +143,8 @@ class Character:
 
         
     def DrawSquare(self):
-        pygame.draw.rect(screen, self.color, pygame.Rect(self.xpos, self.ypos, 30, 30))
-
+        square = pygame.draw.rect(screen, self.color, pygame.Rect(self.xpos, self.ypos, 30, 30))
+        return square
         
 pygame.init()
 
@@ -161,11 +163,13 @@ ball2color = BLACK
 
 clock = pygame.time.Clock()
 
-Ball1 = Character(ball1x, ball1y, ball1color, groundlevel1)
-Ball2 = Character(ball2x, ball2y, ball2color, groundlevel2)
+Ball1 = Character(ball1x, ball1y, ball1color, groundlevel1, "square1")
+Ball2 = Character(ball2x, ball2y, ball2color, groundlevel2, "square2")
 
-new1 = platform(GREEN, 450, 540, 25, 25, newplatforms)
-#new2
+new1 = platform(GREY, 475, 530, 15, 25, newplatforms)
+new2 = platform(GREY, 475, 470, 15, 25, newplatforms)
+new3 = platform(GREY, 320, 420, 15, 25, newplatforms)
+new4 = platform(GREY, 220, 360, 15, 25, newplatforms)
 
 button1 = platform(GREEN, 425, 580, 10, 20, buttons)
 button2 = platform(GREEN, 665, 280, 10, 20, buttons)
@@ -198,7 +202,7 @@ floating1 = platform(GREY, 0, 225, 25, 25, platforms)
 floating2 = platform(GREY, 350, 125, 25, 25, platforms)
 floating5 = platform(GREY, 550, 125, 25, 40, platforms)
 
-ending = end(DRGREY, 900, 0, 150, 200, platforms)
+ending1 = ending(DRGREY, 900, 0, 150, 200, endings)
 
 Ball1.update()
 Ball2.update()
@@ -311,32 +315,17 @@ while Run:
     
     for plat in platforms:
         plat.draw()
-    
-    for button in buttons:
-        button.draw()
-    pygame.display.update()
-    
-    if Ball1.ypos >= 570 or Ball2.ypos >= 570:
-        Run = False
-        time.sleep(3)
-    
-    clock.tick(60)
-    
-pygame.quit()
-
-            
-    Ball1.update()
-    Ball2.update()
         
-    screen.fill(RED)
+    for ending in endings:
+        end = ending.draw()
     
-    square1 = Ball1.DrawSquare()
-    square2 = Ball2.DrawSquare()
-    
-    for plat in platforms:
-        plat.draw()
     for button in buttons:
         button.draw()
+        
+    if square1.colliderect(end) and square2.colliderect(end):
+        Run = False
+    
+    
     pygame.display.update()
     
     if Ball1.ypos >= 570 or Ball2.ypos >= 570:
