@@ -12,7 +12,8 @@ import time
 
 #lists for platforms and the ending 
 platforms = []
-endings = []
+buttons = []
+
 
 # prepares screen size
 size = (1000,600)
@@ -25,32 +26,39 @@ BLACK = (0,0,0)
 WHITE = (255,255,255)
 RED = (255,0,0)
 
+# sets ground level of squares as varibale
 groundlevel1 = 500
 groundlevel2 = 500
 
 # platform class we used to make all the platforms in the game
 class platform:
-    def __init__(self, color, xpos, ypos, h, w):
+    def __init__(self, color, xpos, ypos, h, w, listy):
         self.xpos = xpos
         self.color = color
         self.ypos = ypos
         self.w = w
         self.h = h
-        platforms.append(self)
+        listy.append(self)
+    
+    #draws the platforms
     def draw(self):
         pygame.draw.rect(screen, self.color, pygame.Rect(self.xpos, self.ypos, self.w, self.h))
 
+# class that makes the blocks at the end of the game
 class end:
-    def __init__(self, color, xpos, ypos, h, w):
+    def __init__(self, color, xpos, ypos, h, w, listy):
         self.xpos = xpos
         self.color = color
         self.ypos = ypos
         self.w = w
         self.h = h
-        endings.append(self)
+        listy.append(self)
+        
+    # Draws the ending blocks
     def draw(self):
         pygame.draw.rect(screen, self.color, pygame.Rect(self.xpos, self.ypos, self.w, self.h))
 
+# class that creates the 2 characters and updates there position
 class Character:
     def __init__(self, xpos, ypos, color, groundlevel):
         self.size = size
@@ -62,26 +70,70 @@ class Character:
         self.jumped = False
         self.groundlevel = groundlevel
         
+    #function that updates the position of the characters
     def update(self):
+        # sets onplat to false by default
         onplat = False
         
+        # update ypos based on current y velocity
         self.vy += self.ay
         self.ypos += self.vy
         
+        # stop moving down if the ypos gets to the ground level
         if self.ypos > self.groundlevel:
             self.ypos = self.groundlevel
             self.vy = 0
             self.jumped = False
             
+        # sets variable as true if the character is on one of the platforms
         for plat in platforms:
             if self.xpos < plat.xpos + (plat.w) and self.xpos > plat.xpos - 30:
                 if self.ypos + 30 <= plat.ypos + (plat.h / 2) and self.ypos < plat.ypos and self.ypos > plat.ypos - 35:
                     self.groundlevel = plat.ypos - 30
                     onplat = True
+                    
+        if self.xpos < button1.xpos + (button1.w) and self.xpos > button1.xpos - 30:
+            if self.ypos + 30 <= button1.ypos + (button1.h / 2) and self.ypos < button1.ypos and self.ypos > button1.ypos - 35:
+                try:
+                    buttons.remove(button1)
+                    platforms.remove(black1)
+                except:
+                    pass
+
+        if self.xpos < button2.xpos + (button2.w) and self.xpos > button2.xpos - 30:
+            if self.ypos + 30 <= button2.ypos + (button2.h / 2) and self.ypos < button2.ypos and self.ypos > button2.ypos - 35:
+                try:
+                    buttons.remove(button2)
+                except:
+                    pass
                 
+        # subtracts 5 from ground level if not on platform so you fall
         if not onplat:
             self.groundlevel += 5
+        
+        for plat in platforms:
+            if self.xpos < plat.xpos + (plat.w) and self.xpos > plat.xpos - 30:
+                if self.ypos <= plat.ypos + plat.h and self.ypos + 30 > plat.ypos + plat.h:
+                    self.ypos = plat.ypos + plat.h
+                    jumped = False
                    
+        if Ball1.ypos + 30 > button1.ypos and Ball1.ypos < button1.ypos + button1.h:
+            if Ball1.xpos + 30 > button1.xpos and Ball1.xpos < button1.xpos + button1.w:
+                try:
+                    buttons.remove(button1)
+                    platforms.remove(black1)
+                except:
+                    pass
+                
+        if Ball2.ypos + 30 > button2.ypos and Ball2.ypos < button2.ypos + button2.h:
+            if Ball2.xpos + 30 > button2.xpos and Ball2.xpos < button2.xpos + button2.w:
+                try:
+                    buttons.remove(button2)
+                    platforms.remove(black2)
+                except:
+                    pass
+
+        
     def DrawSquare(self):
         pygame.draw.rect(screen, self.color, pygame.Rect(self.xpos, self.ypos, 30, 30))
 
@@ -106,37 +158,38 @@ clock = pygame.time.Clock()
 Ball1 = Character(ball1x, ball1y, ball1color, groundlevel1)
 Ball2 = Character(ball2x, ball2y, ball2color, groundlevel2)
 
+button1 = platform(GREEN, 425, 580, 10, 20, buttons)
+button2 = platform(GREEN, 665, 280, 10, 20, buttons)
 
+black1 = platform(DRGREY, 850, 425, 110, 25, platforms)
 
-black1 = platform(DRGREY, 850, 425, 110, 25)
+small1 = platform(GREY, 200, 575, 25, 25, platforms)
+small2 = platform(GREY, 350, 525, 75, 25, platforms)
+small3 = platform(GREY, 375, 590, 10, 125, platforms)
 
-small1 = platform(GREY, 200, 575, 25, 25)
-small2 = platform(GREY, 350, 525, 75, 25)
-small3 = platform(GREY, 375, 590, 10, 125)
+big1 = platform(GREY, 500, 530, 75, 575, platforms)
 
-big1 = platform(GREY, 500, 530, 75, 575)
+big3 = platform(GREY, 0, 530, 70, 100, platforms)
 
-big3 = platform(GREY, 0, 530, 70, 100)
+wall1 = platform(GREY, 800, 150, 300, 200, platforms)
+wall2 = platform(GREY, 500, 300, 250, 25, platforms)
 
-wall1 = platform(GREY, 800, 150, 300, 200)
-wall2 = platform(GREY, 500, 300, 250, 25)
+smallest1 = platform(GREY, 650, 290, 10, 50, platforms)
+smallest2 = platform(GREY, 500, 400, 25, 50, platforms)
+smallest4 = platform(GREY, 675, 440, 10, 125, platforms)
+smallestnew = platform(GREY, 650, 345, 10, 50, platforms)
 
-smallest1 = platform(GREY, 650, 290, 10, 50)
-smallest2 = platform(GREY, 500, 400, 25, 50)
-smallest4 = platform(GREY, 675, 440, 10, 125)
-smallestnew = platform(GREY, 650, 345, 10, 50)
-
-bump1 = platform(GREY, 600, 495, 35, 25)
+bump1 = platform(GREY, 600, 495, 35, 25, platforms)
 #earlybump = platform(GREY, 475, 505, 25, 25)
 
-floating2 = platform(GREY, 100, 275, 25, 50)
-floating6 = platform(GREY, 125, 175, 25, 100)
-floatingnew = platform(GREY, 300, 300, 50, 20)
-floating1 = platform(GREY, 0, 225, 25, 25)
-floating2 = platform(GREY, 350, 125, 25, 25)
-floating5 = platform(GREY, 550, 125, 25, 40)
+floating2 = platform(GREY, 100, 275, 25, 50, platforms)
+floating6 = platform(GREY, 125, 175, 25, 100, platforms)
+floatingnew = platform(GREY, 300, 300, 50, 20, platforms)
+floating1 = platform(GREY, 0, 225, 25, 25, platforms)
+floating2 = platform(GREY, 350, 125, 25, 25, platforms)
+floating5 = platform(GREY, 550, 125, 25, 40, platforms)
 
-ending = end(DRGREY, 900, 0, 150, 200)
+ending = end(DRGREY, 900, 0, 150, 200, platforms)
 
 Ball1.update()
 Ball2.update()
@@ -244,8 +297,8 @@ while Run:
     
     for plat in platforms:
         plat.draw()
-    for ends in endings:
-        ends.draw()
+    for button in buttons:
+        button.draw()
     pygame.display.update()
     
     if Ball1.ypos >= 570 or Ball2.ypos >= 570:
