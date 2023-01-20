@@ -13,6 +13,10 @@ import time
 #lists for platforms and the ending 
 platforms = []
 buttons = []
+newplatforms = []
+
+global newplats
+newplats = False
 
 
 # prepares screen size
@@ -104,6 +108,8 @@ class Character:
             if self.ypos + 30 <= button2.ypos + (button2.h / 2) and self.ypos < button2.ypos and self.ypos > button2.ypos - 35:
                 try:
                     buttons.remove(button2)
+                    global newplats
+                    newplats = True
                 except:
                     pass
                 
@@ -129,7 +135,7 @@ class Character:
             if Ball2.xpos + 30 > button2.xpos and Ball2.xpos < button2.xpos + button2.w:
                 try:
                     buttons.remove(button2)
-                    platforms.remove(black2)
+                    newplats = True
                 except:
                     pass
 
@@ -157,6 +163,9 @@ clock = pygame.time.Clock()
 
 Ball1 = Character(ball1x, ball1y, ball1color, groundlevel1)
 Ball2 = Character(ball2x, ball2y, ball2color, groundlevel2)
+
+new1 = platform(GREEN, 450, 540, 25, 25, newplatforms)
+#new2
 
 button1 = platform(GREEN, 425, 580, 10, 20, buttons)
 button2 = platform(GREEN, 665, 280, 10, 20, buttons)
@@ -285,6 +294,35 @@ while Run:
             onone = False
             Ball2.groundlevel = Ball1.groundlevel
             
+
+            
+    Ball1.update()
+    Ball2.update()
+        
+    screen.fill(RED)
+    
+    square1 = Ball1.DrawSquare()
+    square2 = Ball2.DrawSquare()
+    
+
+    if newplats:
+        for plat in newplatforms:
+            platforms.append(plat)
+    
+    for plat in platforms:
+        plat.draw()
+    
+    for button in buttons:
+        button.draw()
+    pygame.display.update()
+    
+    if Ball1.ypos >= 570 or Ball2.ypos >= 570:
+        Run = False
+        time.sleep(3)
+    
+    clock.tick(60)
+    
+pygame.quit()
 
             
     Ball1.update()
