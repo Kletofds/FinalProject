@@ -10,14 +10,6 @@ from pygame import *
 import math
 import time
 
-#lists for platforms and the ending 
-platforms = []
-buttons = []
-newplatforms = []
-endings = []
-
-global newplats
-newplats = False
 
 # RGB colors
 GREEN = (0, 255, 0)
@@ -27,6 +19,11 @@ BLACK = (0,0,0)
 WHITE = (255,255,255)
 RED = (255,0,0)
 BLUE = (0,0,255)
+BROWN = (27,105,151)
+OFFWHITE = (240,230,230)
+SQUARE1COL = (255,105,180)
+SQUARE2COL = (255,164,0)
+
         
 # Function that replaces score on leaderboard with new time
 def replaceline(list_num):
@@ -207,6 +204,14 @@ while Run:
     buttonfont = pygame.font.Font(None, 40)
     titlefont = pygame.font.Font(None, 100)
     leaderboardfont = pygame.font.Font(None, 40)
+    
+    newplatforms = []
+    platforms = []
+    buttons = []
+    endings = []
+
+    global newplats
+    newplats = False
 
     Game = False
     Screen = True
@@ -257,11 +262,11 @@ while Run:
         
         ball1x = 50
         ball1y = 500
-        ball1color = WHITE
+        ball1color = SQUARE1COL
 
         ball2x = 900
         ball2y = 500
-        ball2color = BLACK
+        ball2color = SQUARE2COL
         
         # sets ground level of squares as varibale
         groundlevel1 = 500
@@ -270,47 +275,47 @@ while Run:
         Ball1 = Character(ball1x, ball1y, ball1color, groundlevel1, "square1")
         Ball2 = Character(ball2x, ball2y, ball2color, groundlevel2, "square2")
 
-        new1 = platform(GREY, 475, 530, 15, 25, newplatforms)
-        new2 = platform(GREY, 475, 470, 15, 25, newplatforms)
-        new3 = platform(GREY, 320, 420, 15, 25, newplatforms)
-        new4 = platform(GREY, 220, 360, 15, 25, newplatforms)
+        new1 = platform(BROWN, 475, 530, 15, 25, newplatforms)
+        new2 = platform(BROWN, 475, 470, 15, 25, newplatforms)
+        new3 = platform(BROWN, 320, 420, 15, 25, newplatforms)
+        new4 = platform(BROWN, 220, 360, 15, 25, newplatforms)
 
         button1 = platform(GREEN, 425, 580, 10, 20, buttons)
         button2 = platform(GREEN, 665, 280, 10, 20, buttons)
 
-        black1 = platform(DRGREY, 850, 425, 110, 25, platforms)
+        black1 = platform(BLACK, 850, 425, 110, 25, platforms)
 
-        small1 = platform(GREY, 200, 575, 25, 25, platforms)
-        small2 = platform(GREY, 350, 525, 75, 25, platforms)
-        small3 = platform(GREY, 375, 590, 10, 125, platforms)
+        small1 = platform(BROWN, 200, 575, 25, 25, platforms)
+        small2 = platform(BROWN, 350, 525, 75, 25, platforms)
+        small3 = platform(BROWN, 375, 590, 10, 125, platforms)
 
-        big1 = platform(GREY, 500, 530, 75, 575, platforms)
+        big1 = platform(BROWN, 500, 530, 75, 575, platforms)
 
-        big3 = platform(GREY, 0, 530, 70, 100, platforms)
+        big3 = platform(BROWN, 0, 530, 70, 100, platforms)
 
-        wall1 = platform(GREY, 800, 150, 300, 200, platforms)
-        wall2 = platform(GREY, 500, 300, 250, 25, platforms)
+        wall1 = platform(BROWN, 800, 150, 300, 200, platforms)
+        wall2 = platform(BROWN, 500, 300, 250, 25, platforms)
 
-        smallest1 = platform(GREY, 650, 290, 10, 50, platforms)
-        smallest2 = platform(GREY, 500, 400, 25, 50, platforms)
-        smallest4 = platform(GREY, 675, 440, 10, 125, platforms)
-        smallestnew = platform(GREY, 650, 345, 10, 50, platforms)
+        smallest1 = platform(BROWN, 650, 290, 10, 50, platforms)
+        smallest2 = platform(BROWN, 500, 400, 25, 50, platforms)
+        smallest4 = platform(BROWN, 675, 440, 10, 125, platforms)
+        smallestnew = platform(BROWN, 650, 345, 10, 50, platforms)
 
-        bump1 = platform(GREY, 600, 495, 35, 25, platforms)
+        bump1 = platform(BROWN, 600, 495, 35, 25, platforms)
 
-        floating2 = platform(GREY, 100, 275, 25, 50, platforms)
-        floating6 = platform(GREY, 125, 175, 25, 100, platforms)
-        floatingnew = platform(GREY, 300, 300, 50, 20, platforms)
-        floating1 = platform(GREY, 0, 225, 25, 25, platforms)
-        floating2 = platform(GREY, 350, 125, 25, 25, platforms)
-        floating5 = platform(GREY, 550, 125, 25, 40, platforms)
+        floating2 = platform(BROWN, 100, 275, 25, 50, platforms)
+        floating6 = platform(BROWN, 125, 175, 25, 100, platforms)
+        floatingnew = platform(BROWN, 300, 300, 50, 20, platforms)
+        floating1 = platform(BROWN, 0, 225, 25, 25, platforms)
+        floating2 = platform(BROWN, 350, 125, 25, 25, platforms)
+        floating5 = platform(BROWN, 550, 125, 25, 40, platforms)
 
         ending1 = ending(DRGREY, 900, 0, 150, 200, endings)
         
         Ball1.update()
         Ball2.update()
             
-        screen.fill(RED)
+        screen.fill(OFFWHITE)
 
         square1 = Ball1.DrawSquare()
         square2 = Ball2.DrawSquare()
@@ -408,7 +413,7 @@ while Run:
         Ball1.update()
         Ball2.update()
             
-        screen.fill(RED)
+        screen.fill(OFFWHITE)
         
         square1 = Ball1.DrawSquare()
         square2 = Ball2.DrawSquare()
@@ -481,52 +486,52 @@ while Run:
         leaderboard10 = leaderboard10.split(':')
             
         # Each of these adds a time in correct spot
-        if endtime < int(leaderboard1[1]):
+        if endtime < float(leaderboard1[1]):
             movedown(0)
             delete_extra_line()
             replaceline(0)
             
-        elif endtime < int(leaderboard2[1]):
+        elif endtime < float(leaderboard2[1]):
             movedown(1)
             delete_extra_line()
             replaceline(1)
             
-        elif endtime < int(leaderboard3[1]):
+        elif endtime < float(leaderboard3[1]):
             movedown(2)
             delete_extra_line()
             replaceline(2)
             
-        elif endtime < int(leaderboard4[1]):
+        elif endtime < float(leaderboard4[1]):
             movedown(3)
             delete_extra_line()
             replaceline(3)
             
-        elif endtime < int(leaderboard5[1]):
+        elif endtime < float(leaderboard5[1]):
             movedown(4)
             delete_extra_line()
             replaceline(4)
             
-        elif endtime < int(leaderboard6[1]):
+        elif endtime < float(leaderboard6[1]):
             movedown(5)
             delete_extra_line()
             replaceline(5)
             
-        elif endtime < int(leaderboard7[1]):
+        elif endtime < float(leaderboard7[1]):
             movedown(6)
             delete_extra_line()
             replaceline(6)
             
-        elif endtime < int(leaderboard8[1]):
+        elif endtime < float(leaderboard8[1]):
             movedown(7)
             delete_extra_line()
             replaceline(7)
             
-        elif endtime < int(leaderboard9[1]):
+        elif endtime < float(leaderboard9[1]):
             movedown(8)
             delete_extra_line()
             replaceline(8)
             
-        elif endtime < int(leaderboard10[1]):
+        elif endtime < float(leaderboard10[1]):
             movedown(9)
             delete_extra_line()
             replaceline(9)
